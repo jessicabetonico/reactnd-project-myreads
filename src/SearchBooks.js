@@ -1,12 +1,14 @@
-import React, { Component } from 'react'
-import { Link } from 'react-router-dom'
-import Book from './Book'
-import PropTypes from 'prop-types'
-import * as BooksAPI from './BooksAPI'
+import React, { Component } from 'react';
+import { Link } from 'react-router-dom';
+import Book from './Book';
+import PropTypes from 'prop-types';
+import * as BooksAPI from './BooksAPI';
 
 class SearchBooks extends Component {
   static propTypes = {
-    onUpdateShelfs: PropTypes.func.isRequired, 
+    onUpdateShelfs: PropTypes.func.isRequired,
+    shelfs: PropTypes.object.isRequired,
+    updating: PropTypes.bool.isRequired,
   }
 
   state = {
@@ -17,81 +19,96 @@ class SearchBooks extends Component {
   }
 
   updateQuery = query => {
-    const {firstSearch} = this.state
+    const {firstSearch} = this.state;
 
     this.setState(() => ({
       query: query,
-      loading: true
-    }))
+      loading: true,
+    }));
 
     if (!firstSearch) {
       this.setState({
-        firstSearch: true
-      })
+        firstSearch: true,
+      });
     }
-    
-    this.searchBooks(query)
+
+    this.searchBooks(query);
   }
-  
+
   updateBooks = books => {
     if (!books.hasOwnProperty('length')) {
-      books = []
+      books = [];
     }
-    this.updateStateBooks(books)
+    this.updateStateBooks(books);
   }
 
   updateStateBooks = books => {
     this.setState(() => ({
       books: books,
-      loading: false
-    }))
+      loading: false,
+    }));
   }
 
   searchBooks = query => {
-    if (query !== ''){
+    const {shelfs} = this.props;
+    const shelfKeys = Object.keys(shelfs);
+
+    const currentBooksIds = shelfKeys.reduce((acc, currValue) => {
+      return [...acc, ...shelfs[currValue].books.map(book => book.id)];
+    }, []);
+
+    if (query !== '') {
       BooksAPI.search(query, 10)
         .then((books) => {
-          this.updateBooks(books)
-        })      
+          const searchedBooks = books.filter(book => !currentBooksIds.includes(book.id));
+          this.updateBooks(searchedBooks);
+        });
     } else {
-      this.updateBooks([])
+      this.updateBooks([]);
     }
-    
-  };
+  }
+
+  componentDidUpdate(prevProps, prevState) {
+    const {updating} = this.props;
+
+    if (prevProps.updating !== updating){
+      this.updateQuery(prevState.query);
+    }
+  }
 
   render() {
-    const {books, query, loading, firstSearch} = this.state
-    const {onUpdateShelfs} = this.props
+    const {books, query, loading, firstSearch} = this.state;
+    const {onUpdateShelfs, updating} = this.props;
 
     return (
       <div className="search-books">
         <div className="search-books-bar">
           <Link
-            to='/'
-            className='close-search'
+            to="/"
+            className="close-search"
           >Close</Link>
           <div className="search-books-input-wrapper">
-            <input 
-              type="text" 
+            <input
+              type="text"
               value={query}
-              onChange={(event) => this.updateQuery(event.target.value)} 
+              onChange={(event) => this.updateQuery(event.target.value)}
               placeholder="Search by title or author" />
           </div>
         </div>
         <div className="search-books-results">
           <ol className="books-grid">
-            {loading ? <div className='loader'/> :
+            {loading || updating ? <div className="loader"/> :
               books.length > 0 ? books.map(book => (
-                <Book 
-                  key={book.id} 
-                  bookId={book.id} 
+                <Book
+                  key={book.id}
+                  bookId={book.id}
                   thumbnail={book.imageLinks.thumbnail}
                   title={book.title}
                   authors={book.authors}
                   shelf={book.shelf}
                   onUpdateShelfs={onUpdateShelfs}
                 />
-              )): firstSearch && <h2>Results doesn't match.</h2>}              
+              )): firstSearch && <h2>Results doesn't match.</h2>}
           </ol>
         </div>
       </div>
@@ -99,4 +116,4 @@ class SearchBooks extends Component {
   }
 }
 
-export default SearchBooks
+export default SearchBooks;
