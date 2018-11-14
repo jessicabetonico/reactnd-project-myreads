@@ -4,27 +4,29 @@ import './App.css';
 
 class Book extends Component {
   static propTypes = {
-    bookId: PropTypes.string.isRequired,
-    thumbnail: PropTypes.string.isRequired,
-    title: PropTypes.string.isRequired,
+    book: PropTypes.shape({
+      id: PropTypes.string.isRequired,
+      title: PropTypes.string.isRequired,
+      imageLinks: PropTypes.shape({
+        thumbnail: PropTypes.string,
+      }),
+      authors: PropTypes.array,
+      shelf: PropTypes.string,
+    }).isRequired,
     onUpdateShelfs: PropTypes.func.isRequired,
-    authors: PropTypes.array,
-    shelf: PropTypes.string,
   }
 
-  static defaultProps = {
-    shelf: "none",
-    authors: [],
-  }
-
-  handleSelect = (shelfOption, bookId) => {
-    const {onUpdateShelfs} = this.props;
-    onUpdateShelfs(bookId, shelfOption);
+  handleSelect = (event) => {
+    const {onUpdateShelfs, book} = this.props;
+    const shelfOption = event.target.value;
+    
+    onUpdateShelfs(book, shelfOption);
   }
 
   render() {
-    const {thumbnail, title, authors, shelf, bookId} = this.props;
-
+    const {book} = this.props;
+    const {imageLinks, title, authors, shelf} = book;
+    
     return (
       <li>
         <div className="book">
@@ -33,11 +35,11 @@ class Book extends Component {
               style={{
                 width: 128,
                 height: 193,
-                backgroundImage: `url("${thumbnail}")`
+                backgroundImage: `url("${imageLinks ? imageLinks.thumbnail: ''}")`
               }}>
             </div>
             <div className="book-shelf-changer">
-              <select onChange={(event) => this.handleSelect(event.target.value, bookId)} value={shelf}>
+              <select onChange={this.handleSelect} value={shelf ? shelf : 'none'}>
                 <option value="none" disabled>Move to...</option>
                 <option value="currentlyReading">Currently Reading</option>
                 <option value="wantToRead">Want to Read</option>
@@ -47,7 +49,7 @@ class Book extends Component {
             </div>
           </div>
           <div className="book-title">{title}</div>
-          <div className="book-authors">{authors.map(author => {
+          <div className="book-authors">{authors && authors.map(author => {
             return (
               <div key={author}>
                 {author} <br/>

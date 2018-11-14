@@ -48,30 +48,27 @@ class BooksApp extends React.Component {
     return [-1, undefined];
   }
 
-  updateShelfsFromUser = (bookId, shelf) => {
+  updateShelfsFromUser = (book, shelf) => {
     const {shelfs} = this.state;
     const shelfsKeys = Object.keys(shelfs);
 
     this.setState({ loading: true });
 
-    BooksAPI.get(bookId)
-      .then(book => {
-        BooksAPI.update(book, shelf)
-          .then(_ => {
-            const [index, oldShelf] = this.findIndexBook(book, shelf, shelfsKeys);
+    BooksAPI.update(book, shelf)
+      .then(_ => {
+        const [index, oldShelf] = this.findIndexBook(book, shelf, shelfsKeys);
 
-            if (oldShelf) {
-              shelfs[oldShelf].books.splice(index, 1);
-            }
+        if (oldShelf) {
+          shelfs[oldShelf].books.splice(index, 1);
+        }
 
-            book.shelf = shelf;
-            if (shelf !== 'none') {
-              shelfs[shelf].books.push(book);
-            }
+        book.shelf = shelf;
+        if (shelf !== 'none') {
+          shelfs[shelf].books.push(book);
+        }
 
-            this.updateStateShelfs(shelfs);
-          });
-      });
+        this.updateStateShelfs(shelfs);
+      });      
   }
 
   updateStateShelfs = (shelfs) =>{

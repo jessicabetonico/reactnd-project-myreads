@@ -99,11 +99,7 @@ class SearchBooks extends Component {
               books.length > 0 ? books.map(book => (
                 <Book
                   key={book.id}
-                  bookId={book.id}
-                  thumbnail={book.imageLinks.thumbnail}
-                  title={book.title}
-                  authors={book.authors}
-                  shelf={book.shelf}
+                  book={book}
                   onUpdateShelfs={onUpdateShelfs}
                 />
               )): firstSearch && <h2>Results doesn't match.</h2>}
