@@ -20,7 +20,7 @@ class SearchBooks extends Component {
 
   updateQuery = event => {
     const {firstSearch} = this.state;
-    const query = event.target.value;
+    const query = event.target ? event.target.value : event;
 
     this.setState(() => ({
       query: query,
