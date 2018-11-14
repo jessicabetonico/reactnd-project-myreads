@@ -18,8 +18,9 @@ class SearchBooks extends Component {
     firstSearch: false
   }
 
-  updateQuery = query => {
+  updateQuery = event => {
     const {firstSearch} = this.state;
+    const query = event.target.value;
 
     this.setState(() => ({
       query: query,
@@ -89,7 +90,7 @@ class SearchBooks extends Component {
             <input
               type="text"
               value={query}
-              onChange={(event) => this.updateQuery(event.target.value)}
+              onChange={this.updateQuery}
               placeholder="Search by title or author" />
           </div>
         </div>
