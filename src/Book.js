@@ -39,10 +39,10 @@ class Book extends Component {
             <div className="book-shelf-changer">
               <select onChange={(event) => this.handleSelect(event.target.value, bookId)} value={shelf}>
                 <option value="none" disabled>Move to...</option>
-                <option hidden={shelf === 'currentlyReading'} value="currentlyReading">Currently Reading</option>
-                <option hidden={shelf === 'wantToRead'} value="wantToRead">Want to Read</option>
-                <option hidden={shelf === 'read'} value="read">Read</option>
-                <option hidden={shelf === 'none'} value="none">None</option>
+                <option value="currentlyReading">Currently Reading</option>
+                <option value="wantToRead">Want to Read</option>
+                <option value="read">Read</option>
+                <option value="none">None</option>
               </select>
             </div>
           </div>
