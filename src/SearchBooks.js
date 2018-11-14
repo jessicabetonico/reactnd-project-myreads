@@ -35,11 +35,8 @@ class SearchBooks extends Component {
     this.searchBooks(query);
   }
 
-  updateBooks = books => {
-    if (!books.hasOwnProperty('length')) {
-      books = [];
-    }
-    this.updateStateBooks(books);
+  treatBooks = books => {
+    return !books.hasOwnProperty('length') ? [] : books;
   }
 
   updateStateBooks = books => {
@@ -60,11 +57,12 @@ class SearchBooks extends Component {
     if (query !== '') {
       BooksAPI.search(query, 10)
         .then((books) => {
+          books = this.treatBooks(books);
           const searchedBooks = books.filter(book => !currentBooksIds.includes(book.id));
-          this.updateBooks(searchedBooks);
+          this.updateStateBooks(searchedBooks);
         });
     } else {
-      this.updateBooks([]);
+      this.updateStateBooks([]);
     }
   }
 
