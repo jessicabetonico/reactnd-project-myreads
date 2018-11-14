@@ -88,6 +88,13 @@ body, .app {
   right: 0;
 }
 
+.center-text {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 60vh;
+}
+
 .loader-center::before {
   content: '';
   display: block;

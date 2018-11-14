@@ -1,8 +1,9 @@
 import React from 'react';
 import './App.css';
-import { Route } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import MyReads from './MyReads';
 import SearchBooks from './SearchBooks';
+import NoMatch from  './NoMatch';
 import * as BooksAPI from './BooksAPI';
 
 class BooksApp extends React.Component {
@@ -82,13 +83,18 @@ class BooksApp extends React.Component {
     const {shelfs, loading} = this.state;
     return (
       <div className="app">
-        <Route exact path='/' render={() => (
-          <MyReads loading={loading} onUpdateShelfs={this.updateShelfsFromUser} shelfs={shelfs} />
-        )} />
+        <Router>
+          <Switch>
+            <Route exact path='/' render={() => (
+              <MyReads loading={loading} onUpdateShelfs={this.updateShelfsFromUser} shelfs={shelfs} />
+            )} />
 
-        <Route path='/search' render={({history}) => (
-          <SearchBooks updating={loading} onUpdateShelfs={this.updateShelfsFromUser} shelfs={shelfs} />
-        )} />
+            <Route path='/search' render={() => (
+              <SearchBooks updating={loading} onUpdateShelfs={this.updateShelfsFromUser} shelfs={shelfs} />
+            )} />
+            <Route component={NoMatch}></Route>
+          </Switch>
+        </Router>
       </div>
     )
   }
